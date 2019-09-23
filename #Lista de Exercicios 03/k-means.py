@@ -35,7 +35,7 @@ def distancia_euclidiana(ponto1, ponto2):
 	distancia = 0
 	for i in range(0, len(ponto1)):
 		distancia += ((ponto1[i] - ponto2[i]) ** 2)
-	return sqrt(distancia)
+	return distancia
 def calcular_centro(grupo):
 	x = 0
 	y = 0
@@ -50,8 +50,11 @@ for k in range(5):
 	centros = [amostras[randint(0, len(amostras) - 1)] for i in range(GRUPOS)]
 	grupos = [[] for i in range(GRUPOS)]
 	contador = 1
+	erros  = []
+	contadores = []
 	while True:
 		grupos_anterior = deepcopy(grupos)
+		erro = 0
 		for amostra in amostras:
 			menor_distancia = inf
 			for j in range(GRUPOS):
@@ -64,12 +67,16 @@ for k in range(5):
 				grupos[0].remove(amostra)
 			elif amostra in grupos[1]:
 				grupos[1].remove(amostra)
-
+			erro += menor_distancia
 			grupos[indice].append(amostra)
 			centros[indice] = calcular_centro(grupos[indice])
+		erros.append(erro)
+		contadores.append(contador)
+		# plt.plot(contadores, erros)
+		# plt.show()
 		#verificacao = (grupos_anterior == np.array(grupos)).sum(1)
 		#print(verificacao)
-		if grupos_anterior == grupos:
+		if grupos_anterior == grupos and contador >= 10:
 			print("Algoritmo convergiu em " + str(contador) + " iterações.")
 			break
 		contador += 1
@@ -88,14 +95,14 @@ for k in range(5):
 				grupo_1x.append(pontos[0])
 				grupo_1y.append(pontos[1])
 	
-	# plt.scatter(grupo_0x, grupo_0y, s=10, label="Grupo 0")
-	# plt.scatter([centros[0][0]], [centros[0][1]], s=10, label="Centro Grupo 0")
-	# plt.scatter([centros[1][0]], [centros[1][1]], s=10, label="Centro Grupo 1")
-	# plt.scatter(grupo_1x, grupo_1y, s=10, label="Grupo 1")
-	# plt.title("Grupos")
-	# plt.legend()
-	# plt.savefig('grupos' + str(k)+'.png')
-	# plt.show()
+	plt.scatter(grupo_0x, grupo_0y, s=10, label="Grupo 0")
+	plt.scatter([centros[0][0]], [centros[0][1]], s=10, label="Centro Grupo 0")
+	plt.scatter([centros[1][0]], [centros[1][1]], s=10, label="Centro Grupo 1")
+	plt.scatter(grupo_1x, grupo_1y, s=10, label="Grupo 1")
+	plt.title("Grupos")
+	plt.legend()
+	plt.savefig('grupos' + str(k)+'.png')
+	plt.show()
 string = '['		
 for amostra in amostras:
 	if amostra in grupos[0]:
