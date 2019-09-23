@@ -1,5 +1,8 @@
 from sklearn.cluster import KMeans
+import numpy as np
+from copy import deepcopy
 import seaborn as sb
+import matplotlib.pyplot as plt
 from random import randint
 from math import *
 amostras = [
@@ -42,15 +45,61 @@ def calcular_centro(grupo):
 	x /= len(grupo)
 	y /= len(grupo)
 	return [x, y]	
-for i in range(1):
+for k in range(5):
 	GRUPOS = 2
 	centros = [amostras[randint(0, len(amostras) - 1)] for i in range(GRUPOS)]
 	grupos = [[] for i in range(GRUPOS)]
-	for amostra in amostras:
-		menor_distancia = inf
-		for j in range(GRUPOS):
-			if distancia_euclidiana(centros[j], amostra) < menor_distancia:
-				menor_distancia = distancia_euclidiana(centros[j], amostra)
-				indice = j
-		grupos[indice].append(amostra)
-		centros[indice] = calcular_centro(grupos[indice])
+	contador = 1
+	while True:
+		grupos_anterior = deepcopy(grupos)
+		for amostra in amostras:
+			menor_distancia = inf
+			for j in range(GRUPOS):
+				distancia = distancia_euclidiana(centros[j], amostra)
+				if  distancia < menor_distancia:
+					menor_distancia = distancia
+					indice = j
+			
+			if amostra in grupos[0]:
+				grupos[0].remove(amostra)
+			elif amostra in grupos[1]:
+				grupos[1].remove(amostra)
+
+			grupos[indice].append(amostra)
+			centros[indice] = calcular_centro(grupos[indice])
+		#verificacao = (grupos_anterior == np.array(grupos)).sum(1)
+		#print(verificacao)
+		if grupos_anterior == grupos:
+			print("Algoritmo convergiu em " + str(contador) + " iterações.")
+			break
+		contador += 1
+	grupo_0x = []
+	grupo_0y = []
+
+	grupo_1x = []
+	grupo_1y = []
+
+	for i in range(len(grupos)):
+		for pontos in grupos[i]:
+			if i == 0:
+				grupo_0x.append(pontos[0])
+				grupo_0y.append(pontos[1])
+			if i == 1:
+				grupo_1x.append(pontos[0])
+				grupo_1y.append(pontos[1])
+	
+	# plt.scatter(grupo_0x, grupo_0y, s=10, label="Grupo 0")
+	# plt.scatter([centros[0][0]], [centros[0][1]], s=10, label="Centro Grupo 0")
+	# plt.scatter([centros[1][0]], [centros[1][1]], s=10, label="Centro Grupo 1")
+	# plt.scatter(grupo_1x, grupo_1y, s=10, label="Grupo 1")
+	# plt.title("Grupos")
+	# plt.legend()
+	# plt.savefig('grupos' + str(k)+'.png')
+	# plt.show()
+string = '['		
+for amostra in amostras:
+	if amostra in grupos[0]:
+		string += '0 '
+	elif amostra in grupos[1]:
+		string += '1 '
+print(string[0:len(string) -1] + ']')
