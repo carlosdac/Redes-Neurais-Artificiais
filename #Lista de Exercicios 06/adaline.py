@@ -2,7 +2,7 @@
 from random import random
 from decimal import Decimal, getcontext
 import xlrd
-getcontext().prec = 7
+getcontext().prec = 6
 
 def leitura_treinamento():
     amostras = []
@@ -36,24 +36,24 @@ class Adaline():
     def multiplicar_vetor(self, vetor1, vetor2):
         soma = 0
         for i in range(0, len(vetor1)):
-            soma += (vetor1[i] * (vetor2[i]))
-        return soma
+            soma += (Decimal(vetor1[i]) * Decimal(vetor2[i]))
+        return Decimal(soma)
     def eqm(self):
         eqm = 0
         for amostra in self.amostras:
-            u = (self.multiplicar_vetor(self.pesos_sinapticos, amostra[0]))
-            eqm += (((amostra[1]) - u) ** 2)
+            u = Decimal(self.multiplicar_vetor(self.pesos_sinapticos, amostra[0]))
+            eqm += Decimal(((amostra[1]) - u) ** 2)
         eqm /= len(self.amostras)
-        return eqm
+        return Decimal(eqm)
     def treinar(self):
-        self.pesos_sinapticos = [0, 0, 0]#[Decimal(random()) for i in range(len(self.amostras[0][0]))]
+        self.pesos_sinapticos = [Decimal(random()) for i in range(len(self.amostras[0][0]))]
         self.epocas = 0
         while True:
             eqm_anterior = self.eqm()
             for amostra in self.amostras:
                 u = self.multiplicar_vetor(self.pesos_sinapticos, amostra[0])
                 for i in range(len(self.pesos_sinapticos)):
-                    self.pesos_sinapticos[i] += (self.taxa_aprendizado * ((amostra[1]) - u) * (amostra[0][i]))
+                    self.pesos_sinapticos[i] += Decimal(Decimal(self.taxa_aprendizado) * Decimal((amostra[1]) - u) * Decimal(amostra[0][i]))
             self.epocas += 1
             eqm_atual = self.eqm()
             if abs(eqm_anterior - eqm_atual) <= self.erro or self.epocas == self.maximo_epocas:
@@ -72,4 +72,6 @@ taxa_aprendizado = 0.5
 adaline = Adaline(amostras, taxa_aprendizado, 0, degrau_bipolar)
 adaline.treinar()
 print(adaline.epocas)
+for peso in adaline.pesos_sinapticos:
+    print(peso.quantize(Decimal('1.000000')))
 print(adaline.pesos_sinapticos)
