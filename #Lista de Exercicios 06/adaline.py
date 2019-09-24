@@ -5,6 +5,11 @@ import matplotlib.pyplot as plt
 import xlrd
 getcontext().prec = 6
 
+OFFLINE = 0
+ONLINE = 1
+APRENDIZADO = OFFLINE
+
+
 def leitura_treinamento():
     amostras = []
     xls = xlrd.open_workbook("Treinamento_Adaline_PPA.xls")
@@ -46,24 +51,42 @@ class Adaline():
             eqm += Decimal((Decimal(amostra[1]) - u) ** 2)
         eqm /= len(self.amostras)
         return Decimal(eqm)
+    
+    def soma_erro(self, u):
+        erro = 0
+        for amostra in self.amostras:
+            erro += Decimal(Decimal(amostra[1]) - u)
+        return Decimal(erro)
+
     def treinar(self):
         self.pesos_sinapticos = [Decimal(random()).quantize(Decimal("1.000000")) for i in range(len(self.amostras[0][0]))]#[Decimal(0), Decimal(0), Decimal(0)]
         print("Vetor de pesos inicial: " + str(self.pesos_sinapticos))
         self.epocas = 0
         erros = []
         epoca = []
+        
         while True:
             eqm_anterior = self.eqm()
+            
             for amostra in self.amostras:
                 u = self.multiplicar_vetor(self.pesos_sinapticos, amostra[0])
+                soma_erro = Decimal(self.soma_erro(u))
+                
                 for i in range(len(self.pesos_sinapticos)):
-                    self.pesos_sinapticos[i] += Decimal(Decimal(self.taxa_aprendizado) * Decimal(Decimal(amostra[1]) - u) * Decimal(amostra[0][i]))
+                    if APRENDIZADO == ONLINE:
+                        self.pesos_sinapticos[i] += Decimal(Decimal(self.taxa_aprendizado) * Decimal(Decimal(amostra[1]) - u) * Decimal(amostra[0][i]))
+                    else:
+                        self.pesos_sinapticos[i] += Decimal(Decimal(self.taxa_aprendizado) * soma_erro * Decimal(amostra[0][i]))
+            
             self.epocas += 1
             eqm_atual = self.eqm()
+            
             erros.append(eqm_atual)
             epoca.append(self.epocas)
+            
             if abs(eqm_anterior - eqm_atual) <= self.erro or self.epocas == self.maximo_epocas:
                 return epoca, erros
+    
     def testar(self, amostra):
         u = self.multiplicar_vetor(self.pesos_sinapticos, amostra)
         y = self.g(u)
@@ -77,12 +100,13 @@ amostras = leitura_treinamento()#[([-1, 0, 0], 0), ([-1, 0, 1], 1), ([-1, 1, 0],
 taxa_aprendizado = 0.0025
 adaline = Adaline(amostras, taxa_aprendizado, 0.000001, degrau_bipolar)
 treinamentos = [1, 2, 3, 4, 5]
+APRENDIZADO = ONLINE
 for treinamento in treinamentos:
     erros, epoca = adaline.treinar()
     if treinamento <= 2:
         plt.plot(erros, epoca)
         plt.title("Treinamento: " + str(treinamento))
-        plt.savefig("Treinamento" + str(treinamento) + ".png")
+        plt.savefig("Treinamento3_" + str(treinamento) + ".png")
         plt.show()
     print(adaline.epocas)
     print("Vetor de pesos final: " + str(adaline.pesos_sinapticos))
