@@ -23,43 +23,43 @@ def leitura_treinamento():
         amostra = (linha[0:len(linha)-1], linha[len(linha)-1]) 
         amostra[0].insert(0, -1)
         amostras.append(amostra)
-    x1 = []
-    x2 = []
-    x3 = []
-    x4 = []    
-    for amostra in amostras:
-        for i in range(1, len(amostra[0])):
-            if i == 1:
-                x1.append(amostra[0][i])
-            if i == 2:
-                x2.append(amostra[0][i])
-            if i == 3:
-                x3.append(amostra[0][i])
-            if i == 4:
-                x4.append(amostra[0][i])
-    min_x1 = min(x1)
-    max_x1 = max(x1)
-    min_x2 = min(x2)
-    max_x2 = max(x2)
-    min_x3 = min(x3)
-    max_x3 = max(x3)
-    min_x4 = min(x4)
-    max_x4 = max(x4)
-    for amostra in amostras:
-        for i in range(1, len(amostra[0])):
-            if i == 1:
-                min_x = min_x1
-                max_x = max_x1
-            if i == 2:
-                min_x = min_x2
-                max_x = max_x2
-            if i == 3:
-                min_x = min_x3
-                max_x = max_x3
-            if i == 4:
-                min_x = min_x4
-                max_x = max_x4
-            amostra[0][i] = (amostra[0][i] - min_x)/(max_x - min_x)
+    # x1 = []
+    # x2 = []
+    # x3 = []
+    # x4 = []    
+    # for amostra in amostras:
+    #     for i in range(1, len(amostra[0])):
+    #         if i == 1:
+    #             x1.append(amostra[0][i])
+    #         if i == 2:
+    #             x2.append(amostra[0][i])
+    #         if i == 3:
+    #             x3.append(amostra[0][i])
+    #         if i == 4:
+    #             x4.append(amostra[0][i])
+    # min_x1 = min(x1)
+    # max_x1 = max(x1)
+    # min_x2 = min(x2)
+    # max_x2 = max(x2)
+    # min_x3 = min(x3)
+    # max_x3 = max(x3)
+    # min_x4 = min(x4)
+    # max_x4 = max(x4)
+    # for amostra in amostras:
+    #     for i in range(1, len(amostra[0])):
+    #         if i == 1:
+    #             min_x = min_x1
+    #             max_x = max_x1
+    #         if i == 2:
+    #             min_x = min_x2
+    #             max_x = max_x2
+    #         if i == 3:
+    #             min_x = min_x3
+    #             max_x = max_x3
+    #         if i == 4:
+    #             min_x = min_x4
+    #             max_x = max_x4
+    #         amostra[0][i] = (amostra[0][i] - min_x)/(max_x - min_x)
     return amostras
 def leitura_pesos(arquivo):
     xls = xlrd.open_workbook("pesos/"+ arquivo)
