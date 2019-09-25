@@ -1,44 +1,44 @@
-import xlrd
 from random import random
+import xlrd
 
 def leitura_treinamento():
     amostras = []
-    xls = xlrd.open_workbook("Treinamento_Perceptron.xls")
+    xls = xlrd.open_workbook("Treinamento_Adaline_PPB.xls")
     plan = xls.sheets()[0]
     for i in range(1, plan.nrows):
         linha = plan.row_values(i)
         amostra = (linha[0:len(linha)-1], linha[len(linha)-1]) 
         amostra[0].insert(0, -1)
         amostras.append(amostra)
-    x1 = []
-    x2 = []
-    x3 = []    
-    for amostra in amostras:
-        for i in range(1, len(amostra[0])):
-            if i == 1:
-                x1.append(amostra[0][i])
-            if i == 2:
-                x2.append(amostra[0][i])
-            if i == 3:
-                x3.append(amostra[0][i])
-    min_x1 = min(x1)
-    max_x1 = max(x1)
-    min_x2 = min(x2)
-    max_x2 = max(x2)
-    min_x3 = min(x3)
-    max_x3 = max(x3)
-    for amostra in amostras:
-        for i in range(1, len(amostra[0])):
-            if i == 1:
-                min_x = min_x1
-                max_x = max_x1
-            if i == 2:
-                min_x = min_x2
-                max_x = max_x2
-            if i == 3:
-                min_x = min_x3
-                max_x = max_x3
-            amostra[0][i] = (amostra[0][i] - min_x)/(max_x - min_x)
+    # x1 = []
+    # x2 = []
+    # x3 = []    
+    # for amostra in amostras:
+    #     for i in range(1, len(amostra[0])):
+    #         if i == 1:
+    #             x1.append(amostra[0][i])
+    #         if i == 2:
+    #             x2.append(amostra[0][i])
+    #         if i == 3:
+    #             x3.append(amostra[0][i])
+    # min_x1 = min(x1)
+    # max_x1 = max(x1)
+    # min_x2 = min(x2)
+    # max_x2 = max(x2)
+    # min_x3 = min(x3)
+    # max_x3 = max(x3)
+    # for amostra in amostras:
+    #     for i in range(1, len(amostra[0])):
+    #         if i == 1:
+    #             min_x = min_x1
+    #             max_x = max_x1
+    #         if i == 2:
+    #             min_x = min_x2
+    #             max_x = max_x2
+    #         if i == 3:
+    #             min_x = min_x3
+    #             max_x = max_x3
+    #         amostra[0][i] = (amostra[0][i] - min_x)/(max_x - min_x)
 
     return amostras
 
@@ -51,35 +51,35 @@ def leitura_teste():
         amostra = linha 
         amostra.insert(0, -1)
         amostras.append(amostra)
-    x1 = []
-    x2 = []
-    x3 = []    
-    for amostra in amostras:
-        for i in range(1, len(amostra)):
-            if i == 1:
-                x1.append(amostra[i])
-            if i == 2:
-                x2.append(amostra[i])
-            if i == 3:
-                x3.append(amostra[i])
-    min_x1 = min(x1)
-    max_x1 = max(x1)
-    min_x2 = min(x2)
-    max_x2 = max(x2)
-    min_x3 = min(x3)
-    max_x3 = max(x3)
-    for amostra in amostras:
-        for i in range(1, len(amostra)):
-            if i == 1:
-                min_x = min_x1
-                max_x = max_x1
-            if i == 2:
-                min_x = min_x2
-                max_x = max_x2
-            if i == 3:
-                min_x = min_x3
-                max_x = max_x3
-            amostra[i] = (amostra[i] - min_x)/(max_x - min_x)
+    # x1 = []
+    # x2 = []
+    # x3 = []    
+    # for amostra in amostras:
+    #     for i in range(1, len(amostra)):
+    #         if i == 1:
+    #             x1.append(amostra[i])
+    #         if i == 2:
+    #             x2.append(amostra[i])
+    #         if i == 3:
+    #             x3.append(amostra[i])
+    # min_x1 = min(x1)
+    # max_x1 = max(x1)
+    # min_x2 = min(x2)
+    # max_x2 = max(x2)
+    # min_x3 = min(x3)
+    # max_x3 = max(x3)
+    # for amostra in amostras:
+    #     for i in range(1, len(amostra)):
+    #         if i == 1:
+    #             min_x = min_x1
+    #             max_x = max_x1
+    #         if i == 2:
+    #             min_x = min_x2
+    #             max_x = max_x2
+    #         if i == 3:
+    #             min_x = min_x3
+    #             max_x = max_x3
+    #         amostra[i] = (amostra[i] - min_x)/(max_x - min_x)
     return amostras
 
 def degrau(u):
@@ -93,7 +93,7 @@ def degrau_bipolar(u):
     return -1
 
 class Perceptron():
-    def __init__(self, amostras, taxa_aprendizagem, funcao, maximo_epocas=1000000000000):
+    def __init__(self, amostras, taxa_aprendizagem, funcao, maximo_epocas=9999):
         self.amostras = amostras
         self.maximo_epocas = maximo_epocas
         self.taxa_aprendizagem = taxa_aprendizagem
@@ -132,7 +132,7 @@ class Perceptron():
 amostras = leitura_treinamento()
 testes = leitura_teste()
 print(testes)
-taxa_aprendizagem = 0.01
+taxa_aprendizagem = 0.001
 funcao = degrau_bipolar
 perceptron = Perceptron(amostras, taxa_aprendizagem, funcao)
 for i in range(0, 5):
