@@ -12,7 +12,7 @@ APRENDIZADO = OFFLINE
 
 def leitura_treinamento():
     amostras = []
-    xls = xlrd.open_workbook("Treinamento_Adaline_PPA.xls")
+    xls = xlrd.open_workbook("Treinamento_Adaline_PPB.xls")
     plan = xls.sheets()[0]
     for i in range(1, plan.nrows):
         linha = plan.row_values(i)
@@ -97,7 +97,7 @@ class Adaline():
         return
 
 amostras = leitura_treinamento()#[([-1, 0, 0], 0), ([-1, 0, 1], 1), ([-1, 1, 0], 1), ([-1, 1, 1], 1)]#
-taxa_aprendizado = 0.0025
+taxa_aprendizado = 0.001
 adaline = Adaline(amostras, taxa_aprendizado, 0.000001, degrau_bipolar)
 treinamentos = [1, 2, 3, 4, 5]
 APRENDIZADO = ONLINE
@@ -106,7 +106,7 @@ for treinamento in treinamentos:
     if treinamento <= 2:
         plt.plot(erros, epoca)
         plt.title("Treinamento: " + str(treinamento))
-        plt.savefig("Treinamento3_" + str(treinamento) + ".png")
+        plt.savefig("Treinamento_" + str(treinamento) + "_PPB.png")
         plt.show()
     print(adaline.epocas)
     print("Vetor de pesos final: " + str(adaline.pesos_sinapticos))
