@@ -7,6 +7,7 @@ import os
 
 OFFLINE = 0
 ONLINE = 1
+HESSIANA = 2
 APRENDIZADO = ONLINE
 arquivos = []
 for _, _, arquivo in os.walk('pesos/'):
@@ -96,8 +97,25 @@ class Adaline():
         self.amostras = amostras
         self.taxa_aprendizado = taxa_aprendizado
         self.g = funcao
+        #self.hessiana()
         self.maximo_epocas = maximo_epocas
         self.erro = erro
+
+    def hessiana(self, amostra):
+        hess = [[] for i in range(0, len(amostra) + 1)]
+        aux = [1] + amostra[0]
+        hess[0] = aux
+
+        for i in range(1, len(hess)):
+            hess[i] += amostra[0]
+            for j in range(0, len(amostra)):
+                if j == i - 1:
+                    for k in range(0, len(hess[i])):
+                        print(hess[i][k])
+                        hess[i][k] *= amostra[0][j]
+        print(hess)
+        return hess
+
 
     def multiplicar_vetor(self, vetor1, vetor2):
         soma = 0
@@ -137,6 +155,7 @@ class Adaline():
                 soma_erro += ((amostra[1]) - u)
             
             for amostra in self.amostras:
+                hess = self.hessiana(amostra)
                 u = self.multiplicar_vetor(self.pesos_sinapticos, amostra[0])
                 print("u = " + str(u))
                 print("w = " + str(self.pesos_sinapticos).replace(",", "") + "T + " + str((self.taxa_aprendizado)) + " * " + str(((amostra[1]) - u)) + " * " + str((amostra[0])).replace(",", "") )
@@ -144,6 +163,8 @@ class Adaline():
                 for i in range(len(self.pesos_sinapticos)):
                     if APRENDIZADO == ONLINE:
                         self.pesos_sinapticos[i] += ((self.taxa_aprendizado) * ((amostra[1]) - u) * (amostra[0][i]))
+                    elif APRENDIZADO == HESSIANA:
+                        self.pesos_sinapticos[i] += ((self.taxa_aprendizado) * soma_erro * (amostra[0][i]))
                     else:
                         self.pesos_sinapticos[i] += ((self.taxa_aprendizado) * soma_erro * (amostra[0][i]))
                 
@@ -170,24 +191,26 @@ class Adaline():
             print("1")
         return
 
-amostras = [([-1, 0, 0], 0), ([-1, 0, 1], 1), ([-1, 1, 0], 1), ([-1, 1, 1], 1)]#
+amostras = leitura_treinamento()#[([-1, 0, 0], 0), ([-1, 0, 1], 1), ([-1, 1, 0], 1), ([-1, 1, 1], 1)]#
 taxa_aprendizado = 0.5
 adaline = Adaline(amostras, taxa_aprendizado, 0.0001, degrau_bipolar, 10)
-print(adaline.treinar())
-# treinamentos = [1, 2, 3, 4, 5]
-# APRENDIZADO = OFFLINE
-# for treinamento in treinamentos:
-#     erros, epoca = adaline.treinar()
-#     if treinamento <= 2:
-#         plt.plot(erros, epoca)
-#         plt.title("Treinamento: " + str(treinamento))
-#         plt.savefig("Treinamento4_" + str(treinamento) + ".png")
-#         plt.show()
-#     print(adaline.epocas)
-#     print("Vetor de pesos final: " + str(adaline.pesos_sinapticos))
-#     print("\n\n")
-# for peso in adaline.pesos_sinapticos:
-#     print(peso.quantize(('1.000000')))
+adaline.treinar()
+input()
+#print(adaline.treinar())
+treinamentos = [1, 2, 3, 4, 5]
+APRENDIZADO = HESSIANA
+for treinamento in treinamentos:
+    erros, epoca = adaline.treinar()
+    if treinamento <= 2:
+        plt.plot(erros, epoca)
+        plt.title("Treinamento: " + str(treinamento))
+        plt.savefig("Treinamento4_" + str(treinamento) + ".png")
+        plt.show()
+    print(adaline.epocas)
+    print("Vetor de pesos final: " + str(adaline.pesos_sinapticos))
+    print("\n\n")
+for peso in adaline.pesos_sinapticos:
+    print(peso.quantize(('1.000000')))
 # adaline = Adaline(None, None, None, degrau_bipolar)
 # amostras = leitura_amostras()
 # for arquivo in arquivos[0]:
