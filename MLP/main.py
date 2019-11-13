@@ -50,8 +50,8 @@ class MLP():
             #     if j == 0:
             #         pesos_neuronio = []
             #     self.peso_sinaptico[i].append(pesos_neuronio)
-            self.peso_sinaptico = [[[], [0.2, -0.1, -0.3], [-0.5, -0.8, 0.4], [-0.1, 0.1, 0.6]], [[], [0.1, 0.5, -0.3, 0.1], [0.3, 0.2, 0.6, -0.9]]]
-            self.potencial_ativacao.append([-1 for k in range(0, self.camadas[i] + 1)])
+            self.peso_sinaptico = [[[], [0.2, -0.1, 0.3], [-0.5, -0.8, 0.4], [-0.1, 0.1, -0.6]], [[], [0.1, 0.5, -0.3, 0.1], [0.3, 0.2, 0.6, -0.9]]]
+            self.potencial_ativacao.append([0 for k in range(0, self.camadas[i] + 1)])
             saida = []
             for k in range(0, self.camadas[i] + 1):
                 saida.append(-1)
@@ -92,9 +92,14 @@ class MLP():
                         else:
                             entrada = self.saida[i - 1]
                         u = self.calcular_potencial(self.peso_sinaptico[i][j], entrada)
-                        self.potencial_ativacao[i][j] = u
-                        self.saida[i][j] = self.funcao_ativacao(u)
+                        self.potencial_ativacao[i][j] = round(u,6)
+                        self.saida[i][j] = round(self.funcao_ativacao(u), 6)
                     #passo backward
+                    print("Potencial de ativação camada " + str(i) + ": " + str(self.potencial_ativacao[i]))
+                    print(self.peso_sinaptico[i][j])
+                    print(entrada)
+                    print("Saída: " + str(self.saida[i]))
+                    input('')
                 for i in range(len(self.camadas) - 1, -1, -1):
                     if i == 0:
                         saida = amostra[0]
@@ -102,9 +107,9 @@ class MLP():
                         saida = self.saida[i - 1]
                     for j in range (1, self.camadas[i] + 1):
                         if i == len(self.camadas) - 1:
-                            self.gradiente_local[i][j] = (amostra[1][j] - self.saida[i][j]) * self.funcao_ativacao(self.potencial_ativacao[i][j], derivada=True)
+                            self.gradiente_local[i][j] = round((amostra[1][j] - self.saida[i][j]) * self.funcao_ativacao(self.potencial_ativacao[i][j], derivada=True), 6)
                         else:
-                            self.gradiente_local[i][j] = self.calcular_gradiente_local(i, j) * self.funcao_ativacao(self.potencial_ativacao[i][j], derivada=True)
+                            self.gradiente_local[i][j] = round(self.calcular_gradiente_local(i, j) * self.funcao_ativacao(self.potencial_ativacao[i][j], derivada=True), 6)
                         # self.gradiente_local[i][j] =  valor * self.funcao_ativacao(self.potencial_ativacao[i][j], derivada=True)
                         for k in range(0, len(self.peso_sinaptico[i][j])):
                             self.peso_sinaptico[i][j][k]  += round((self.taxa_aprendizagem * self.gradiente_local[i][j] * saida[k]), 6)
@@ -115,7 +120,7 @@ class MLP():
                 print(self.epocas)
                 for i in range(0, len(self.camadas)):
                     print("Camada " + str(i) + ":" + str(self.peso_sinaptico[i]))
+                    print("Gradiente: " + str(i) + ":" + str(self.gradiente_local[i]))
                 break
 mlp = MLP([3, 2], [[[2,1], [1, 0]]], logistica, 0.5, 0.000001)
 mlp.treinar()
-print(mlp.gradiente_local)
