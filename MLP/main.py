@@ -77,7 +77,7 @@ class MLP():
                     self.potencial_ativacao[i][j] = u
                     self.saida[i][j] = self.funcao_ativacao(u)
                 #passo backward
-            for i in range(len(self.camadas) - 1, 0, -1):
+            for i in range(len(self.camadas) - 1, -1, -1):
                 if i == 0:
                     saida = amostra[0]
                 else:
@@ -88,7 +88,7 @@ class MLP():
                     else:
                         self.gradiente_local[i][j] = self.calcular_gradiente_local(i, j) * self.funcao_ativacao(self.potencial_ativacao[i][j], derivada=True)
                     # self.gradiente_local[i][j] =  valor * self.funcao_ativacao(self.potencial_ativacao[i][j], derivada=True)
-                    for k in range(1, len(self.peso_sinaptico[i][j])):
+                    for k in range(0, len(self.peso_sinaptico[i][j])):
                         self.peso_sinaptico[i][j][k]  += self.taxa_aprendizagem * self.gradiente_local[i][j] * saida[k]
         for i in range(0, len(self.camadas)):
             print("Camada " + str(i) + ":" + str(self.peso_sinaptico[i]))
