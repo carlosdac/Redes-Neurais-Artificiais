@@ -42,7 +42,6 @@ class MLP():
                 tamanho_saida = self.camadas[i] + 1
             if i == 0:
                 tamanho_camada_anterior = len(self.entradas[0][0])
-                print(self.entradas[0][0])
             else:
                 tamanho_camada_anterior = self.camadas[i - 1] + 1
             # for j in range(0, self.camadas[i] + 1):
@@ -62,6 +61,7 @@ class MLP():
         for j in range(0, len(self.entradas)):
             for i in range(1, len(self.saida[len(self.saida) - 1])):
                 soma[j] += pow((self.entradas[j][1][i] - self.saida[len(self.saida) - 1][i]), 2)
+                print("d(k) = " + str(round(self.entradas[j][1][i], 6)) + " ; y = " + str(round(self.saida[len(self.saida) - 1][i], 6)))
             soma[j] /= len(self.saida[len(self.saida) - 1]) 
         soma_final = 0
         for valor in soma:
@@ -82,7 +82,7 @@ class MLP():
         return soma
     def treinar(self):
         while(True):
-            EQM_ANTERIOR = self.eqm()
+            EQM_ANTERIOR = round(self.eqm(), 6)
             for amostra in self.entradas:
                 for i in range(0, len(self.camadas)):
                     #passo foward
@@ -113,7 +113,7 @@ class MLP():
                         # self.gradiente_local[i][j] =  valor * self.funcao_ativacao(self.potencial_ativacao[i][j], derivada=True)
                         for k in range(0, len(self.peso_sinaptico[i][j])):
                             self.peso_sinaptico[i][j][k]  += round((self.taxa_aprendizagem * self.gradiente_local[i][j] * saida[k]), 6)
-            EQM_ATUAL = self.eqm()
+            EQM_ATUAL = round(self.eqm(), 6)
             print("|" + str(EQM_ANTERIOR) + "-" + str(EQM_ATUAL) + "| = " + str(abs(round((EQM_ANTERIOR - EQM_ATUAL), 6))))
             self.epocas += 1
             if abs(EQM_ANTERIOR - EQM_ATUAL) <= self.precisao or self.epocas == 1:
