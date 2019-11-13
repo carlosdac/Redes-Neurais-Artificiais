@@ -39,11 +39,12 @@ class MLP():
                 print(self.entradas[0][0])
             else:
                 tamanho_camada_anterior = self.camadas[i - 1] + 1
-            for j in range(0, self.camadas[i] + 1):
-                pesos_neuronio = [round(random(), 2) for k in range(0, tamanho_camada_anterior)]
-                if j == 0:
-                    pesos_neuronio = []
-                self.peso_sinaptico[i].append(pesos_neuronio)
+            # for j in range(0, self.camadas[i] + 1):
+            #     pesos_neuronio = [[[0.2, -0.1, -0.3], [-0.5, -0.8, 0.4], [-0.1, 0.1, 0.6]], [[0.1, 0.5, -0.3, 0.1], [0.3, 0.2, 0.6, -0.9]]]#[round(random(), 2) for k in range(0, tamanho_camada_anterior)]
+            #     if j == 0:
+            #         pesos_neuronio = []
+            #     self.peso_sinaptico[i].append(pesos_neuronio)
+            self.peso_sinaptico = [[[], [0.2, -0.1, -0.3], [-0.5, -0.8, 0.4], [-0.1, 0.1, 0.6]], [[], [0.1, 0.5, -0.3, 0.1], [0.3, 0.2, 0.6, -0.9]]]
             self.potencial_ativacao.append([-1 for k in range(0, self.camadas[i] + 1)])
             saida = []
             for k in range(0, self.camadas[i] + 1):
@@ -85,7 +86,6 @@ class MLP():
                         else:
                             entrada = self.saida[i - 1]
                         u = self.calcular_potencial(self.peso_sinaptico[i][j], entrada)
-                        print(self.potencial_ativacao)
                         self.potencial_ativacao[i][j] = u
                         self.saida[i][j] = self.funcao_ativacao(u)
                     #passo backward
@@ -101,14 +101,15 @@ class MLP():
                             self.gradiente_local[i][j] = self.calcular_gradiente_local(i, j) * self.funcao_ativacao(self.potencial_ativacao[i][j], derivada=True)
                         # self.gradiente_local[i][j] =  valor * self.funcao_ativacao(self.potencial_ativacao[i][j], derivada=True)
                         for k in range(0, len(self.peso_sinaptico[i][j])):
-                            self.peso_sinaptico[i][j][k]  += self.taxa_aprendizagem * self.gradiente_local[i][j] * saida[k]
-            for i in range(0, len(self.camadas)):
-                print("Camada " + str(i) + ":" + str(self.peso_sinaptico[i]))
+                            self.peso_sinaptico[i][j][k]  += round((self.taxa_aprendizagem * self.gradiente_local[i][j] * saida[k]), 6)
             EQM_ATUAL = self.eqm()
-            print("|" + str(EQM_ANTERIOR) + "-" + str(EQM_ATUAL) + "| = " + str(abs(EQM_ANTERIOR - EQM_ATUAL)))
+            print("|" + str(EQM_ANTERIOR) + "-" + str(EQM_ATUAL) + "| = " + str(abs(round((EQM_ANTERIOR - EQM_ATUAL), 6))))
             self.epocas += 1
-            if abs(EQM_ANTERIOR - EQM_ATUAL) <= self.precisao:
+            if abs(EQM_ANTERIOR - EQM_ATUAL) <= self.precisao or self.epocas == 1:
                 print(self.epocas)
+                for i in range(0, len(self.camadas)):
+                    print("Camada " + str(i) + ":" + str(self.peso_sinaptico[i]))
                 break
-mlp = MLP([2, 3, 2], [[[2, 4, 1], [1, 2]], [[1, 7, 8], [2, 2]], [[2, 5, 1], [1, 1]]], tangente_hiperbolica, 0.5, 0.0001)
+mlp = MLP([3, 2], [[[2,1], [1, 0]]], tangente_hiperbolica, 0.5, 0.000001)
 mlp.treinar()
+print(mlp.gradiente_local)
