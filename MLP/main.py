@@ -6,6 +6,12 @@ def tangente_hiperbolica(u, derivada=False, beta=1):
     else:
         return (1 - exp(-beta * u))/ (1 + exp(-beta * u))
 
+def logistica(u, derivada=False, beta=1):
+    if derivada:
+        return ((beta * exp(-beta * u)) / pow((1 + exp(-beta * u)), 2))
+    else:
+        return 1 / (1 + exp(-beta * u))
+
 class MLP():
     def __init__(self, camadas, entradas, funcao_ativacao, taxa_aprendizagem, precisao):
         self.camadas = camadas
@@ -110,6 +116,6 @@ class MLP():
                 for i in range(0, len(self.camadas)):
                     print("Camada " + str(i) + ":" + str(self.peso_sinaptico[i]))
                 break
-mlp = MLP([3, 2], [[[2,1], [1, 0]]], tangente_hiperbolica, 0.5, 0.000001)
+mlp = MLP([3, 2], [[[2,1], [1, 0]]], logistica, 0.5, 0.000001)
 mlp.treinar()
 print(mlp.gradiente_local)
