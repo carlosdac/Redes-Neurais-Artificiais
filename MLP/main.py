@@ -12,6 +12,12 @@ def logistica(u, derivada=False, beta=1):
     else:
         return 1 / (1 + exp(-beta * u))
 
+def linear(u, derivada=False):
+    if derivada:
+        return 1
+    else:
+        return u
+
 class MLP():
     def __init__(self, camadas, entradas, funcao_ativacao, taxa_aprendizagem, precisao):
         self.camadas = camadas
@@ -62,7 +68,7 @@ class MLP():
             for i in range(1, len(self.saida[len(self.saida) - 1])):
                 soma[j] += pow((self.entradas[j][1][i] - self.saida[len(self.saida) - 1][i]), 2)
                 print("d(k) = " + str(round(self.entradas[j][1][i], 6)) + " ; y = " + str(round(self.saida[len(self.saida) - 1][i], 6)))
-            soma[j] /= len(self.saida[len(self.saida) - 1]) 
+            soma[j] /= len(self.saida[len(self.saida) - 1]) - 1 
         soma_final = 0
         for valor in soma:
             soma_final += valor
@@ -77,7 +83,7 @@ class MLP():
 
     def calcular_gradiente_local(self, i, j):
         soma = 0
-        for k in range(1, self.camadas[i + 1]):
+        for k in range(1, self.camadas[i + 1] + 1):
             soma += self.gradiente_local[i + 1][k] * self.peso_sinaptico[i + 1][k][j]
         return soma
     def treinar(self):
@@ -93,7 +99,7 @@ class MLP():
                             entrada = self.saida[i - 1]
                         u = self.calcular_potencial(self.peso_sinaptico[i][j], entrada)
                         self.potencial_ativacao[i][j] = round(u,6)
-                        self.saida[i][j] = round(self.funcao_ativacao(u), 6)
+                        self.saida[i][j] = round(self.funcao_ativacao[i](u), 6)
                     #passo backward
                     print("Potencial de ativação camada " + str(i) + ": " + str(self.potencial_ativacao[i]))
                     print(self.peso_sinaptico[i][j])
@@ -107,11 +113,15 @@ class MLP():
                         saida = self.saida[i - 1]
                     for j in range (1, self.camadas[i] + 1):
                         if i == len(self.camadas) - 1:
-                            self.gradiente_local[i][j] = round((amostra[1][j] - self.saida[i][j]) * self.funcao_ativacao(self.potencial_ativacao[i][j], derivada=True), 6)
+                            self.gradiente_local[i][j] = round((amostra[1][j] - self.saida[i][j]) * self.funcao_ativacao[i](self.potencial_ativacao[i][j], derivada=True), 6)
                         else:
-                            self.gradiente_local[i][j] = round(self.calcular_gradiente_local(i, j) * self.funcao_ativacao(self.potencial_ativacao[i][j], derivada=True), 6)
+                            self.gradiente_local[i][j] = round(self.calcular_gradiente_local(i, j) * self.funcao_ativacao[i](self.potencial_ativacao[i][j], derivada=True), 6)
                         # self.gradiente_local[i][j] =  valor * self.funcao_ativacao(self.potencial_ativacao[i][j], derivada=True)
+                        print("Gradiente Local " + str(i) + ", " + str(j) + ": " + str(self.gradiente_local[i][j]))
+                        input('')
                         for k in range(0, len(self.peso_sinaptico[i][j])):
+                            print(str(self.peso_sinaptico[i][j][k]) + " + " + str(self.taxa_aprendizagem) + " * " + str(self.gradiente_local[i][j]) + "*" + str(saida[k]))
+                            input('')
                             self.peso_sinaptico[i][j][k]  += round((self.taxa_aprendizagem * self.gradiente_local[i][j] * saida[k]), 6)
             EQM_ATUAL = round(self.eqm(), 6)
             print("|" + str(EQM_ANTERIOR) + "-" + str(EQM_ATUAL) + "| = " + str(abs(round((EQM_ANTERIOR - EQM_ATUAL), 6))))
@@ -122,5 +132,5 @@ class MLP():
                     print("Camada " + str(i) + ":" + str(self.peso_sinaptico[i]))
                     print("Gradiente: " + str(i) + ":" + str(self.gradiente_local[i]))
                 break
-mlp = MLP([3, 2], [[[2,1], [1, 0]]], logistica, 0.5, 0.000001)
+mlp = MLP([3, 2], [[[2,1], [1, 0]]], [logistica, linear], 0.1, 0.000001)
 mlp.treinar()
