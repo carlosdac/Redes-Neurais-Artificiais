@@ -50,12 +50,12 @@ class MLP():
                 tamanho_camada_anterior = len(self.entradas[0][0])
             else:
                 tamanho_camada_anterior = self.camadas[i - 1] + 1
-            # for j in range(0, self.camadas[i] + 1):
-            #     pesos_neuronio = [[[0.2, -0.1, -0.3], [-0.5, -0.8, 0.4], [-0.1, 0.1, 0.6]], [[0.1, 0.5, -0.3, 0.1], [0.3, 0.2, 0.6, -0.9]]]#[round(random(), 2) for k in range(0, tamanho_camada_anterior)]
-            #     if j == 0:
-            #         pesos_neuronio = []
-            #     self.peso_sinaptico[i].append(pesos_neuronio)
-            self.peso_sinaptico = [[[], [0.2, -0.1, 0.3], [-0.5, -0.8, 0.4], [-0.1, 0.1, -0.6]], [[], [0.1, 0.5, -0.3, 0.1], [0.3, 0.2, 0.6, -0.9]]]
+            for j in range(0, self.camadas[i] + 1):
+                 pesos_neuronio = [round(random(), 2) for k in range(0, tamanho_camada_anterior)]
+                 if j == 0:
+                     pesos_neuronio = []
+                 self.peso_sinaptico[i].append(pesos_neuronio)
+            #self.peso_sinaptico = [[[], [0.2, -0.1, 0.3], [-0.5, -0.8, 0.4], [-0.1, 0.1, -0.6]], [[], [0.1, 0.5, -0.3, 0.1], [0.3, 0.2, 0.6, -0.9]]]
             self.potencial_ativacao.append([0 for k in range(0, self.camadas[i] + 1)])
             saida = []
             for k in range(0, self.camadas[i] + 1):
